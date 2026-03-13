@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group   = 'io.github.odin'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Provided at runtime by Burp Suite itself; excluded from fat JAR
+    compileOnly 'net.portswigger.burp.extensions:montoya-api:2026.2'
+}
+
+shadowJar {
+    archiveBaseName.set('odin')
+    archiveClassifier.set('')
+    archiveVersion.set(project.version)
+    minimize()
+}
+
+// Make 'build' produce the fat jar automatically
+assemble.dependsOn shadowJar
