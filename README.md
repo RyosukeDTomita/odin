@@ -10,9 +10,10 @@
 ## INDEX
 
 - [ABOUT](#about)
-- [HOW TO USE](#how-to-use)
 - [ENVIRONMENT](#environment)
+- [HOW TO USE](#how-to-use)
 - [For Developers](#for-developers)
+- [BApp Store Acceptance Criteria Self-Check](#bapp-store-acceptance-criteria-self-check)
 
 ---
 
@@ -64,17 +65,33 @@ It works with both **Community and Professional** editions via the [Montoya API]
 
 ---
 
+## ENVIRONMENT
+
+- Nix Flake
+  - Java: 21
+  - Gradle: 8.7
+    - montoya-api: 2026.2
+    - Shadow plugin: 8.3.5 (`com.gradleup.shadow`)
+    - jacoco
+- tested on [Burp Suite Community Edition 2026.2.3 Linux(x64)](https://portswigger.net/burp/releases/professional-community-edition-2026-2-3)
+
+---
+
 ## HOW TO USE
 
 1. Build the JAR (or download a release):
+
     ```shell
     ./gradlew shadowJar
-    # Output: build/libs/odin-1.0.0.jar
+    # Output: build/libs/odin-0.0.1.jar
     ```
+
+    > [!NOTE]
+    > You can download `.jar` from [latest Releases](https://github.com/RyosukeDTomita/odin/releases)
 
 2. Open Burp Suite and go to **Extensions > Add**.
    - Extension type: **Java**
-   - Select file: `build/libs/odin-1.0.0.jar`
+   - Select file: `build/libs/odin-0.0.1.jar`
 
 3. Browse the target application through Burp Proxy as usual.
 
@@ -82,16 +99,6 @@ It works with both **Community and Professional** editions via the [Montoya API]
 
 > [!NOTE]
 > Odin only performs **passive** analysis on already-captured traffic. It never sends additional requests to the target.
-
----
-
-## ENVIRONMENT
-
-- Java: 21
-  - montoya-api: 2026.2
-- Gradle: 8.7
-- Shadow plugin: 8.3.5 (`com.gradleup.shadow`)
-- Nix: managed via `flake.nix` + direnv (`use flake`)
 
 ---
 
@@ -110,8 +117,33 @@ nix develop
 
 ```shell
 ./gradlew shadowJar
-# Output: build/libs/odin-1.0.0.jar
+# Output: build/libs/odin-0.0.1.jar
 ```
+
+### Release
+
+1. Update the version in `build.gradle.kts`.
+1. Update any version strings in `README.md` (JAR filename examples).
+1. Run tests and build the JAR:
+
+   ```shell
+   ./gradlew test shadowJar
+   ```
+
+1. Commit the version bump:
+
+   ```shell
+   git add build.gradle.kts README.md
+   git commit -m "Release vX.Y.Z"
+   ```
+
+1. Create a tag and push:
+
+   ```shell
+   git tag vX.Y.Z
+   git push
+   git push --tags
+   ```
 
 ---
 

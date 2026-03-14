@@ -14,7 +14,7 @@
         gradle = pkgs.gradle.override { java = jdk; };
       in {
         devShells.default = pkgs.mkShell {
-          buildInputs = [ jdk gradle ];
+          buildInputs = [ jdk gradle pkgs.pinact ];
 
           shellHook = ''
             export JAVA_HOME="${jdk}"
