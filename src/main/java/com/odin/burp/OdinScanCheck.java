@@ -1,4 +1,4 @@
-package io.github.odin;
+package com.odin.burp;
 
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.http.message.HttpRequestResponse;
@@ -7,7 +7,8 @@ import burp.api.montoya.scanner.ConsolidationAction;
 import burp.api.montoya.scanner.ScanCheck;
 import burp.api.montoya.scanner.audit.insertionpoint.AuditInsertionPoint;
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
-import io.github.odin.checker.HeaderChecker;
+import com.odin.burp.checker.HeaderChecker;
+import com.odin.burp.issue.IssueBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +33,9 @@ public class OdinScanCheck implements ScanCheck {
         List<AuditIssue> issues = new ArrayList<>();
         for (HeaderChecker checker : checkers) {
             try {
-                issues.addAll(checker.check(baseRequestResponse));
+                checker.check(baseRequestResponse).stream()
+                    .map(IssueBuilder::build)
+                    .forEach(issues::add);
             } catch (Exception e) {
                 api.logging().logToError("Odin: error in checker " + checker.getClass().getSimpleName() + ": " + e.getMessage());
             }

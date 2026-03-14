@@ -1,9 +1,8 @@
-package io.github.odin.checker;
+package com.odin.burp.checker;
 
 import burp.api.montoya.http.message.HttpRequestResponse;
-import burp.api.montoya.scanner.audit.issues.AuditIssue;
-import io.github.odin.issue.IssueBuilder;
-import io.github.odin.issue.IssueDefinition;
+import com.odin.burp.Finding;
+import com.odin.burp.issue.IssueDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +15,8 @@ public class SecurityHeaderChecker implements HeaderChecker {
     private static final long MIN_HSTS_MAX_AGE = 31536000L; // 1 year
 
     @Override
-    public List<AuditIssue> check(HttpRequestResponse requestResponse) {
-        List<AuditIssue> issues = new ArrayList<>();
+    public List<Finding> check(HttpRequestResponse requestResponse) {
+        List<Finding> issues = new ArrayList<>();
 
         var response = requestResponse.response();
         boolean isHttps = requestResponse.request().url().toLowerCase().startsWith("https://");
@@ -25,13 +24,13 @@ public class SecurityHeaderChecker implements HeaderChecker {
         // X-Content-Type-Options
         String xcto = response.headerValue("X-Content-Type-Options");
         if (xcto == null) {
-            issues.add(IssueBuilder.build(
+            issues.add(new Finding(
                 IssueDefinition.XCTO_MISSING,
                 "The X-Content-Type-Options header is absent.",
                 requestResponse
             ));
         } else if (!"nosniff".equalsIgnoreCase(xcto.trim())) {
-            issues.add(IssueBuilder.build(
+            issues.add(new Finding(
                 IssueDefinition.XCTO_INVALID,
                 "X-Content-Type-Options is set to an invalid value: <b>" + sanitize(xcto) + "</b>. Only 'nosniff' is valid.",
                 requestResponse
@@ -42,7 +41,7 @@ public class SecurityHeaderChecker implements HeaderChecker {
         if (isHttps) {
             String hsts = response.headerValue("Strict-Transport-Security");
             if (hsts == null) {
-                issues.add(IssueBuilder.build(
+                issues.add(new Finding(
                     IssueDefinition.HSTS_MISSING,
                     "The Strict-Transport-Security header is absent on an HTTPS response.",
                     requestResponse
@@ -50,14 +49,14 @@ public class SecurityHeaderChecker implements HeaderChecker {
             } else {
                 long maxAge = parseMaxAge(hsts);
                 if (maxAge < MIN_HSTS_MAX_AGE) {
-                    issues.add(IssueBuilder.build(
+                    issues.add(new Finding(
                         IssueDefinition.HSTS_WEAK_MAX_AGE,
                         "Strict-Transport-Security max-age is " + maxAge + " seconds (minimum recommended: " + MIN_HSTS_MAX_AGE + ").",
                         requestResponse
                     ));
                 }
                 if (!hsts.toLowerCase().contains("includesubdomains")) {
-                    issues.add(IssueBuilder.build(
+                    issues.add(new Finding(
                         IssueDefinition.HSTS_NO_INCLUDE_SUBDOMAINS,
                         "Strict-Transport-Security does not include the includeSubDomains directive.",
                         requestResponse
@@ -71,7 +70,7 @@ public class SecurityHeaderChecker implements HeaderChecker {
         String csp = response.headerValue("Content-Security-Policy");
         boolean hasFrameAncestors = csp != null && csp.toLowerCase().contains("frame-ancestors");
         if (xfo == null && !hasFrameAncestors) {
-            issues.add(IssueBuilder.build(
+            issues.add(new Finding(
                 IssueDefinition.XFO_MISSING,
                 "Neither X-Frame-Options nor a Content-Security-Policy frame-ancestors directive is present.",
                 requestResponse
@@ -80,7 +79,7 @@ public class SecurityHeaderChecker implements HeaderChecker {
 
         // Content-Security-Policy
         if (csp == null) {
-            issues.add(IssueBuilder.build(
+            issues.add(new Finding(
                 IssueDefinition.CSP_MISSING,
                 "The Content-Security-Policy header is absent.",
                 requestResponse
@@ -90,7 +89,7 @@ public class SecurityHeaderChecker implements HeaderChecker {
         // Referrer-Policy
         String rp = response.headerValue("Referrer-Policy");
         if (rp == null) {
-            issues.add(IssueBuilder.build(
+            issues.add(new Finding(
                 IssueDefinition.REFERRER_POLICY_MISSING,
                 "The Referrer-Policy header is absent.",
                 requestResponse
@@ -98,7 +97,7 @@ public class SecurityHeaderChecker implements HeaderChecker {
         } else {
             String rpLower = rp.trim().toLowerCase();
             if (rpLower.equals("unsafe-url") || rpLower.equals("no-referrer-when-downgrade")) {
-                issues.add(IssueBuilder.build(
+                issues.add(new Finding(
                     IssueDefinition.REFERRER_POLICY_UNSAFE,
                     "Referrer-Policy is set to an unsafe value: <b>" + sanitize(rp.trim()) + "</b>.",
                     requestResponse
@@ -109,7 +108,7 @@ public class SecurityHeaderChecker implements HeaderChecker {
         // Permissions-Policy
         String pp = response.headerValue("Permissions-Policy");
         if (pp == null) {
-            issues.add(IssueBuilder.build(
+            issues.add(new Finding(
                 IssueDefinition.PERMISSIONS_POLICY_MISSING,
                 "The Permissions-Policy header is absent.",
                 requestResponse

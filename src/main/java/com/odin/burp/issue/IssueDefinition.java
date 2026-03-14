@@ -1,4 +1,4 @@
-package io.github.odin.issue;
+package com.odin.burp.issue;
 
 import burp.api.montoya.scanner.audit.issues.AuditIssueConfidence;
 import burp.api.montoya.scanner.audit.issues.AuditIssueSeverity;
