@@ -35,31 +35,32 @@ It works with both **Community and Professional** editions via the [Montoya API]
 
 ### Findings Reference
 
-| Severity | Category | Finding | Trigger condition | Example (response header) | Reference |
-|---|---|---|---|---|---|
-| HIGH | CORS | CORS: Reflected Origin | `ACAO` value equals the request `Origin` header | `Access-Control-Allow-Origin: https://evil.com` (mirrors `Origin: https://evil.com`) | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
-| HIGH | CORS | CORS: Credentials + Reflected Origin | Reflected `ACAO` **and** `ACAC: true` | `Access-Control-Allow-Origin: https://evil.com`<br>`Access-Control-Allow-Credentials: true` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
-| HIGH | CORS | CORS: Credentials + Wildcard Origin | `ACAO: *` **and** `ACAC: true` | `Access-Control-Allow-Origin: *`<br>`Access-Control-Allow-Credentials: true` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
-| MEDIUM | CORS | CORS: Wildcard Origin | `ACAO: *` | `Access-Control-Allow-Origin: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
-| MEDIUM | Cookie | Cookie: Missing Secure Flag | HTTPS response, `Set-Cookie` has no `Secure` attribute | `Set-Cookie: session=abc; HttpOnly` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| MEDIUM | Cookie | Cookie: SameSite=None Without Secure | `SameSite=None` without `Secure` attribute | `Set-Cookie: session=abc; SameSite=None` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| MEDIUM | Security | HSTS Missing | HTTPS response, `Strict-Transport-Security` header absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) |
-| LOW | CORS | CORS: Dangerous Methods | `ACAM` contains `PUT`, `DELETE`, or `PATCH` | `Access-Control-Allow-Methods: GET, POST, PUT, DELETE` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
-| LOW | Cookie | Cookie: Missing HttpOnly | `Set-Cookie` has no `HttpOnly` attribute | `Set-Cookie: session=abc; Secure` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| LOW | Cookie | Cookie: Missing SameSite | `Set-Cookie` has no `SameSite` attribute | `Set-Cookie: session=abc; Secure; HttpOnly` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| LOW | Cookie | Cookie: SameSite=None | `SameSite=None` (even with `Secure`) | `Set-Cookie: session=abc; Secure; SameSite=None` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| LOW | Security | XFO Missing | `X-Frame-Options` absent **and** `Content-Security-Policy` has no `frame-ancestors` directive | _(both headers absent, or CSP present but without `frame-ancestors`)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) |
-| LOW | Security | CSP Missing | `Content-Security-Policy` header absent | _(header absent)_ | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
-| LOW | Security | XCTO Missing | `X-Content-Type-Options` header absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options) |
-| LOW | Security | XCTO Invalid | `X-Content-Type-Options` value is not `nosniff` | `X-Content-Type-Options: sniff` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options) |
-| LOW | Security | HSTS Weak max-age | `max-age` < 31536000 (1 year) | `Strict-Transport-Security: max-age=3600` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) |
-| LOW | Security | Referrer-Policy Unsafe | Value is `unsafe-url` or `no-referrer-when-downgrade` | `Referrer-Policy: unsafe-url`<br>`Referrer-Policy: no-referrer-when-downgrade` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy) |
-| INFORMATION | Cookie | Cookie: Session Cookie | `Set-Cookie` has neither `Expires` nor `Max-Age` | `Set-Cookie: session=abc; Secure; HttpOnly` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| INFORMATION | Cookie | Cookie: Overly Broad Path | `Set-Cookie` has `Path=/` | `Set-Cookie: session=abc; Path=/` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| INFORMATION | Cookie | Cookie: Domain Attribute Set | `Set-Cookie` has a `Domain=` attribute | `Set-Cookie: session=abc; Domain=.example.com` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
-| INFORMATION | Security | HSTS: no includeSubDomains | `Strict-Transport-Security` has no `includeSubDomains` directive | `Strict-Transport-Security: max-age=31536000` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) |
-| INFORMATION | Security | Referrer-Policy Missing | `Referrer-Policy` header absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy) |
-| INFORMATION | Security | Permissions-Policy Missing | `Permissions-Policy` header absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy) |
+| Severity | Category | Trigger condition | Example (response header) | Reference |
+|---|---|---|---|---|
+| HIGH | CORS | `ACAO` reflects the request `Origin` | `Access-Control-Allow-Origin: https://evil.com` (mirrors `Origin: https://evil.com`) | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
+| HIGH | CORS | `ACAO` reflects `Origin` **and** `ACAC: true` | `Access-Control-Allow-Origin: https://evil.com`<br>`Access-Control-Allow-Credentials: true` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
+| HIGH | CORS | `ACAO: *` **and** `ACAC: true` | `Access-Control-Allow-Origin: *`<br>`Access-Control-Allow-Credentials: true` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
+| MEDIUM | CORS | `ACAO: *` | `Access-Control-Allow-Origin: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
+| MEDIUM | Cookie | HTTPS response, `Set-Cookie` has no `Secure` | `Set-Cookie: session=abc; HttpOnly` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| MEDIUM | Cookie | `SameSite=None` without `Secure` | `Set-Cookie: session=abc; SameSite=None` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| MEDIUM | Security | HTTPS response, `Strict-Transport-Security` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) |
+| LOW | CORS | `ACAM` contains `PUT`, `DELETE`, or `PATCH` | `Access-Control-Allow-Methods: GET, POST, PUT, DELETE` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
+| LOW | Cookie | `Set-Cookie` has no `HttpOnly` | `Set-Cookie: session=abc; Secure` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| LOW | Cookie | `Set-Cookie` has no `SameSite` | `Set-Cookie: session=abc; Secure; HttpOnly` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| LOW | Cookie | `SameSite=None` (even with `Secure`) | `Set-Cookie: session=abc; Secure; SameSite=None` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| LOW | Security | `X-Frame-Options` absent **and** CSP has no `frame-ancestors` | _(both absent, or CSP present but without `frame-ancestors`)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) |
+| LOW | Security | `Content-Security-Policy` absent | _(header absent)_ | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
+| LOW | Security | `X-Content-Type-Options` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options) |
+| LOW | Security | `X-Content-Type-Options` value is not `nosniff` | `X-Content-Type-Options: sniff` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options) |
+| LOW | Security | `max-age` < 31536000 (1 year) | `Strict-Transport-Security: max-age=3600` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) |
+| LOW | Security | `Referrer-Policy` is `unsafe-url` or `no-referrer-when-downgrade` | `Referrer-Policy: unsafe-url`<br>`Referrer-Policy: no-referrer-when-downgrade` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy) |
+| INFORMATION | Cookie | `Set-Cookie` has neither `Expires` nor `Max-Age` | `Set-Cookie: session=abc; Secure; HttpOnly` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| INFORMATION | Cookie | `Set-Cookie` has `Path=/` | `Set-Cookie: session=abc; Path=/` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| INFORMATION | Cookie | `Set-Cookie` has a `Domain=` attribute | `Set-Cookie: session=abc; Domain=.example.com` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) |
+| INFORMATION | Security | `Strict-Transport-Security` has no `includeSubDomains` | `Strict-Transport-Security: max-age=31536000` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) |
+| INFORMATION | Security | `Referrer-Policy` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy) |
+| INFORMATION | Security | `Permissions-Policy` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy) |
+| INFORMATION | CORS | `ACAH: *` | `Access-Control-Allow-Headers: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
 | INFORMATION | CORS | CORS: Wildcard Headers | `ACAH: *` | `Access-Control-Allow-Headers: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
 
 ---
