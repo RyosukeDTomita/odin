@@ -21,18 +21,6 @@ public class Extension implements BurpExtension {
             new SecurityHeaderChecker()
         );
 
-        // Scanner integration (Professional only) — gracefully skipped in Community edition
-        try {
-            OdinScanCheck scanCheck = new OdinScanCheck(api, checkers);
-            api.scanner().registerScanCheck(scanCheck);
-            api.logging().logToOutput("Scanner integration active (Professional edition).");
-        } catch (Exception e) {
-            api.logging().logToOutput("Scanner not available (Community edition) — using Proxy handler instead.");
-        }
-
-        // Proxy handler works in both Community and Professional editions.
-        // Findings appear as color-coded annotations in Proxy > HTTP history,
-        // and are logged to Extensions > Output.
         api.proxy().registerResponseHandler(new OdinProxyHandler(api, checkers));
 
         api.extension().registerUnloadingHandler(() ->
