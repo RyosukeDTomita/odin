@@ -7,7 +7,7 @@
 [![Scorecard supply-chain security](https://github.com/RyosukeDTomita/odin/actions/workflows/scorecard.yml/badge.svg)](https://github.com/RyosukeDTomita/odin/actions/workflows/scorecard.yml)
 [![CodeQL](https://github.com/RyosukeDTomita/odin/actions/workflows/codeql.yml/badge.svg)](https://github.com/RyosukeDTomita/odin/actions/workflows/codeql.yml)
 
-[!icon](./assets/odin.jpg)
+![icon](./assets/odin.jpg)
 
 ## INDEX
 
