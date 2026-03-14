@@ -61,7 +61,6 @@ It works with both **Community and Professional** editions via the [Montoya API]
 | INFORMATION | Security | `Referrer-Policy` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy) |
 | INFORMATION | Security | `Permissions-Policy` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy) |
 | INFORMATION | CORS | `ACAH: *` | `Access-Control-Allow-Headers: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
-| INFORMATION | CORS | CORS: Wildcard Headers | `ACAH: *` | `Access-Control-Allow-Headers: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
 
 ---
 
