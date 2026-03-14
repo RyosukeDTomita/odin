@@ -7,6 +7,8 @@
 [![Scorecard supply-chain security](https://github.com/RyosukeDTomita/odin/actions/workflows/scorecard.yml/badge.svg)](https://github.com/RyosukeDTomita/odin/actions/workflows/scorecard.yml)
 [![CodeQL](https://github.com/RyosukeDTomita/odin/actions/workflows/codeql.yml/badge.svg)](https://github.com/RyosukeDTomita/odin/actions/workflows/codeql.yml)
 
+[!icon](./assets/odin.jpg)
+
 ## INDEX
 
 - [ABOUT](#about)
@@ -61,7 +63,7 @@ It works with both **Community and Professional** editions via the [Montoya API]
 | INFORMATION | Security | `Strict-Transport-Security` has no `includeSubDomains` | `Strict-Transport-Security: max-age=31536000` | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) |
 | INFORMATION | Security | `Referrer-Policy` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy) |
 | INFORMATION | Security | `Permissions-Policy` absent | _(header absent)_ | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy) |
-| INFORMATION | CORS | `ACAH: *` | `Access-Control-Allow-Headers: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
+| LOW | CORS | `ACAH: *` | `Access-Control-Allow-Headers: *` | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
 
 ---
 
@@ -166,18 +168,18 @@ The extension name is set to `Odin - Security Header Linter` and clearly describ
 Yes.
 
 - All HTTP header values are treated as untrusted input.
-- Header values displayed in issue details are HTML-sanitized before use.
+- Header values are never directly reflected in output; findings reference only hardcoded `IssueDefinition` names and static descriptions.
 - No `eval`, reflection, or shell execution of header data.
 
 ### 4. It includes all dependencies
 
 Yes.
-`montoya-api` is declared `compileOnly` (Burp provides it at runtime). All other dependencies are bundled via the Shadow plugin into a single fat JAR. See [build.gradle](./build.gradle).
+`montoya-api` is declared `compileOnly` (Burp provides it at runtime). All other dependencies are bundled via the Shadow plugin into a single fat JAR. See [build.gradle.kts](./build.gradle.kts).
 
 ### 5. It uses threads to maintain responsiveness
 
 Yes.
-`passiveAudit()` is invoked by Burp on its own scanner background thread. The extension performs no Swing EDT operations and no blocking I/O.
+`handleResponseReceived()` is invoked by Burp on its own proxy thread. The extension performs no Swing EDT operations and no blocking I/O.
 
 ### 6. It unloads cleanly
 
@@ -199,7 +201,7 @@ The extension operates entirely offline — all checks are pure in-memory analys
 Yes.
 
 - No long-term references to `HttpRequestResponse` objects are held.
-- Each `passiveAudit()` invocation is stateless.
+- Each `handleResponseReceived()` invocation is stateless.
 
 ### 10. It provides a parent for GUI elements
 
