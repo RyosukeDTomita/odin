@@ -38,6 +38,8 @@ It works with both **Community and Professional** editions via the [Montoya API]
 
 ### Findings Reference
 
+> **Note:** Severity levels are based on the author's personal judgment — none of the referenced sources assign explicit severity ratings. If you disagree, feel free to open an issue or fork and tweak the values to suit your needs.
+
 | Severity | Category | Trigger condition | Example (response header) | Reference |
 |---|---|---|---|---|
 | HIGH | CORS | `ACAO` reflects the request `Origin` | `Access-Control-Allow-Origin: https://evil.com` (mirrors `Origin: https://evil.com`) | [OWASP](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html) |
@@ -120,6 +122,12 @@ nix develop
 ```shell
 ./gradlew shadowJar
 # Output: build/libs/odin-0.0.1.jar
+```
+
+### Format
+
+```shell
+./gradlew fmt
 ```
 
 ### Release

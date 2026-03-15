@@ -2,6 +2,7 @@ plugins {
     java
     id("com.gradleup.shadow") version "8.3.5"
     jacoco
+    id("com.diffplug.spotless") version "7.0.2"
 }
 
 group   = "com.odin.burp"
@@ -20,6 +21,7 @@ repositories {
 dependencies {
     // Provided at runtime by Burp Suite itself; excluded from fat JAR
     compileOnly("net.portswigger.burp.extensions:montoya-api:2026.2")
+    testImplementation("net.portswigger.burp.extensions:montoya-api:2026.2")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("org.mockito:mockito-core:5.11.0")
@@ -37,6 +39,18 @@ tasks.shadowJar {
 // Make 'build' produce the fat jar automatically
 tasks.assemble {
     dependsOn(tasks.shadowJar)
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        importOrder()
+        removeUnusedImports()
+    }
+}
+
+tasks.register("fmt") {
+    dependsOn(tasks.named("spotlessApply"))
 }
 
 tasks.test {
