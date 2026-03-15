@@ -124,6 +124,12 @@ nix develop
 # Output: build/libs/odin-0.0.1.jar
 ```
 
+### Format
+
+```shell
+./gradlew fmt
+```
+
 ### Release
 
 1. Update the version in `build.gradle.kts`.

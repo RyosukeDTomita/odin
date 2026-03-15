@@ -2,6 +2,7 @@ plugins {
     java
     id("com.gradleup.shadow") version "8.3.5"
     jacoco
+    id("com.diffplug.spotless") version "7.0.2"
 }
 
 group   = "com.odin.burp"
@@ -38,6 +39,18 @@ tasks.shadowJar {
 // Make 'build' produce the fat jar automatically
 tasks.assemble {
     dependsOn(tasks.shadowJar)
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        importOrder()
+        removeUnusedImports()
+    }
+}
+
+tasks.register("fmt") {
+    dependsOn(tasks.named("spotlessApply"))
 }
 
 tasks.test {
